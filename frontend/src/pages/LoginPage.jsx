@@ -30,7 +30,13 @@ export default function LoginPage() {
         navigate('/app/dashboard');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || "Invalid login credentials. Please check your email and password.");
+      if (!err.response) {
+        setError("Unable to reach the sign-in service. Please try again later.");
+      } else if (err.response.status >= 500) {
+        setError("The sign-in service is temporarily unavailable. Please try again later.");
+      } else {
+        setError(err.response.data?.detail || "Unable to sign in. Please check your details and try again.");
+      }
     } finally {
       setLoading(false);
     }
